@@ -3,12 +3,15 @@ pipeline {
   stages {
     stage('build') {
       steps {
-        sh './mvnw clean package -Dcheckstyle.skip'
+        curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | \
+	  sh -s -- -b /usr/local/bin v0.54.0
+	  chmod +x /usr/local/bin/syft
+
       }
     }
     stage('Generate SBOM') {
       steps {
-        sh 'syft packages dir:. --scope AllLayers'
+        sh 'syft dir:.'
       }
     }
   }
